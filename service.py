@@ -20,14 +20,20 @@ CLASSES: dict[str, type[Entity]] = {
 }
 
 
+def empty_data() -> dict[str, dict[int, Entity]]:
+    """Возвращает пустое хранилище: для каждой коллекции пустой словарь."""
+    data: dict[str, dict[int, Entity]] = {}
+    for name in CLASSES:
+        data[name] = {}
+    return data
+
+
 class ProjectManagementSystem:
     """Хранит объекты всех коллекций и выполняет операции CRUD."""
 
     def __init__(self) -> None:
         # для каждой коллекции - словарь {id: объект}
-        self.data: dict[str, dict[int, Entity]] = {
-            name: {} for name in CLASSES
-        }
+        self.data = empty_data()
 
     def get_collection(self, name: str) -> dict[int, Entity]:
         """Возвращает словарь объектов коллекции по её имени."""
@@ -35,11 +41,13 @@ class ProjectManagementSystem:
             raise ValidationError(f"Неизвестная коллекция '{name}'")
         return self.data[name]
 
-    @staticmethod
-    def build(name: str, fields: dict[str, Any]) -> Entity:
+    def build(self, name: str, fields: dict[str, Any]) -> Entity:
         """Создаёт объект класса коллекции name из словаря полей."""
+        entity_class = CLASSES[name]
         try:
-            return CLASSES[name](**fields)
+            # ** передаёт словарь как именованные аргументы:
+            # Department(**{"id": 1, "name": "X"}) = Department(id=1, name="X")
+            return entity_class(**fields)
         except TypeError:
             # не хватает полей, есть лишние поля или fields - не словарь
             raise ValidationError(f"Неверный набор полей для '{name}'")
@@ -49,8 +57,13 @@ class ProjectManagementSystem:
     def create(self, name: str, fields: dict[str, Any]) -> Entity:
         """Create: создаёт объект, id назначается автоматически."""
         items = self.get_collection(name)
-        new_id = max(items, default=0) + 1
-        entity = self.build(name, {"id": new_id, **fields})
+        # новый id = самый большой id в коллекции + 1
+        new_id = 1
+        if items:
+            new_id = max(items) + 1
+        fields = dict(fields)
+        fields["id"] = new_id
+        entity = self.build(name, fields)
         items[new_id] = entity
         return entity
 
@@ -91,15 +104,19 @@ class ProjectManagementSystem:
 
     def to_data(self) -> dict[str, list[dict[str, Any]]]:
         """Преобразует все объекты в словари для записи в файл."""
-        return {name: [entity.to_dict() for entity in items.values()]
-                for name, items in self.data.items()}
+        result: dict[str, list[dict[str, Any]]] = {}
+        for name, items in self.data.items():
+            result[name] = []
+            for entity in items.values():
+                result[name].append(entity.to_dict())
+        return result
 
     def load_data(self, data: dict[str, list[dict[str, Any]]]) -> None:
         """Заменяет все объекты данными, прочитанными из файла.
 
         Если в данных есть ошибка, старые данные остаются без изменений.
         """
-        new_data: dict[str, dict[int, Entity]] = {name: {} for name in CLASSES}
+        new_data = empty_data()
         try:
             for name, items in data.items():
                 if name not in CLASSES:

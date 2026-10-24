@@ -9,6 +9,8 @@ from exceptions import AppError, ValidationError
 from service import ProjectManagementSystem
 from storage import JsonStorage, XmlStorage
 
+# Папка data рядом с этим файлом: __file__ - путь к main.py,
+# поэтому файлы находятся, из какой бы папки ни запустили программу
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 JSON_FILE = os.path.join(DATA_DIR, "data.json")
 XML_FILE = os.path.join(DATA_DIR, "data.xml")
@@ -65,17 +67,6 @@ class ConsoleApp:
 
     def run(self) -> None:
         """Главный цикл программы."""
-        actions = {
-            "1": self.show_all,
-            "2": self.show_one,
-            "3": self.create,
-            "4": self.update,
-            "5": self.delete,
-            "6": lambda: self.save(JsonStorage(), JSON_FILE),
-            "7": lambda: self.load(JsonStorage(), JSON_FILE),
-            "8": lambda: self.save(XmlStorage(), XML_FILE),
-            "9": lambda: self.load(XmlStorage(), XML_FILE),
-        }
         while True:
             print("\n===== Управление проектами =====")
             print("1. Показать все  2. Показать один  3. Добавить")
@@ -86,22 +77,44 @@ class ConsoleApp:
             choice = input("Выберите пункт: ").strip()
             if choice == "0":
                 break
-            if choice not in actions:
-                print("Нет такого пункта меню")
-                continue
             # все ошибки обрабатываются здесь, программа не завершается
             try:
-                actions[choice]()
+                self.do_action(choice)
             except AppError as error:
                 print(f"Ошибка: {error}")
             except ValueError:
                 print("Ошибка: нужно ввести целое число")
 
+    def do_action(self, choice: str) -> None:
+        """Выполняет пункт меню с номером choice."""
+        if choice == "1":
+            self.show_all()
+        elif choice == "2":
+            self.show_one()
+        elif choice == "3":
+            self.create()
+        elif choice == "4":
+            self.update()
+        elif choice == "5":
+            self.delete()
+        elif choice == "6":
+            self.save(JsonStorage(), JSON_FILE)
+        elif choice == "7":
+            self.load(JsonStorage(), JSON_FILE)
+        elif choice == "8":
+            self.save(XmlStorage(), XML_FILE)
+        elif choice == "9":
+            self.load(XmlStorage(), XML_FILE)
+        else:
+            print("Нет такого пункта меню")
+
     def choose_collection(self) -> str:
         """Спрашивает у пользователя коллекцию и возвращает её имя."""
         names = list(TITLES)
-        for number, name in enumerate(names, start=1):
+        number = 1
+        for name in names:
             print(f"{number}. {TITLES[name]}")
+            number += 1
         number = int(input("Номер коллекции: "))
         if not 1 <= number <= len(names):
             raise ValidationError("Нет коллекции с таким номером")

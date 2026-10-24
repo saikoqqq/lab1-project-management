@@ -117,7 +117,10 @@ class XmlStorage:
                 for field in item:
                     if len(field) > 0:
                         # есть вложенные теги - это список
-                        fields[field.tag] = [child.text for child in field]
+                        values = []
+                        for child in field:
+                            values.append(child.text)
+                        fields[field.tag] = values
                     else:
                         fields[field.tag] = field.text
                 items.append(fields)

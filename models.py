@@ -33,7 +33,9 @@ def check_id(value: Any, field: str) -> int:
 
 def check_text(value: Any, field: str) -> str:
     """Проверяет, что строка не пустая."""
-    text = str(value).strip() if value is not None else ""
+    if value is None:
+        raise ValidationError(f"Поле '{field}' не может быть пустым")
+    text = str(value).strip()
     if not text:
         raise ValidationError(f"Поле '{field}' не может быть пустым")
     return text
@@ -75,7 +77,10 @@ def check_id_list(value: Any, field: str) -> list[int]:
         return []
     if isinstance(value, str):
         value = value.split(",")
-    return [check_id(item, field) for item in value]
+    ids = []
+    for item in value:
+        ids.append(check_id(item, field))
+    return ids
 
 
 # ------------------------------- Классы -------------------------------
