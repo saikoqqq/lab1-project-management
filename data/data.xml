@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='utf-8'?>
+<project_management>
+    <departments>
+        <department>
+            <id>1</id>
+            <name>Разработка</name>
+        </department>
+        <department>
+            <id>2</id>
+            <name>Тестирование</name>
+        </department>
+    </departments>
+    <employees>
+        <employee>
+            <id>1</id>
+            <name>Иван Петров</name>
+            <email>petrov@company.ru</email>
+            <position>Менеджер проектов</position>
+            <department_id>1</department_id>
+        </employee>
+        <employee>
+            <id>2</id>
+            <name>Мария Смирнова</name>
+            <email>smirnova@company.ru</email>
+            <position>Python-разработчик</position>
+            <department_id>1</department_id>
+        </employee>
+        <employee>
+            <id>3</id>
+            <name>Алексей Козлов</name>
+            <email>kozlov@company.ru</email>
+            <position>Тестировщик</position>
+            <department_id>2</department_id>
+        </employee>
+    </employees>
+    <clients>
+        <client>
+            <id>1</id>
+            <name>Ольга Кузнецова</name>
+            <email>olga@shop.ru</email>
+            <company>ООО Магазин</company>
+        </client>
+    </clients>
+    <teams>
+        <team>
+            <id>1</id>
+            <name>Backend</name>
+            <member_ids>
+                <id>2</id>
+                <id>3</id>
+            </member_ids>
+        </team>
+    </teams>
+    <projects>
+        <project>
+            <id>1</id>
+            <name>Интернет-магазин</name>
+            <client_id>1</client_id>
+            <manager_id>1</manager_id>
+            <start_date>2026-09-01</start_date>
+            <deadline>2026-12-20</deadline>
+            <status>active</status>
+            <budget>500000.0</budget>
+        </project>
+    </projects>
+    <milestones>
+        <milestone>
+            <id>1</id>
+            <project_id>1</project_id>
+            <title>MVP</title>
+            <due_date>2026-10-31</due_date>
+        </milestone>
+    </milestones>
+    <tasks>
+        <task>
+            <id>1</id>
+            <project_id>1</project_id>
+            <title>Спроектировать БД</title>
+            <assignee_id>2</assignee_id>
+            <priority>high</priority>
+            <status>done</status>
+            <estimate_hours>8.0</estimate_hours>
+            <due_date>2026-09-15</due_date>
+        </task>
+        <task>
+            <id>2</id>
+            <project_id>1</project_id>
+            <title>Каталог товаров</title>
+            <assignee_id>2</assignee_id>
+            <priority>medium</priority>
+            <status>in_progress</status>
+            <estimate_hours>24.0</estimate_hours>
+            <due_date>2026-10-20</due_date>
+        </task>
+        <task>
+            <id>3</id>
+            <project_id>1</project_id>
+            <title>Тесты каталога</title>
+            <assignee_id>3</assignee_id>
+            <priority>low</priority>
+            <status>todo</status>
+            <estimate_hours>6.0</estimate_hours>
+            <due_date>2026-11-10</due_date>
+        </task>
+    </tasks>
+    <comments>
+        <comment>
+            <id>1</id>
+            <task_id>2</task_id>
+            <author_id>1</author_id>
+            <text>Не забудьте фильтр по цене</text>
+            <created_at>2026-10-05</created_at>
+        </comment>
+    </comments>
+    <time_entries>
+        <time_entry>
+            <id>1</id>
+            <task_id>1</task_id>
+            <employee_id>2</employee_id>
+            <work_date>2026-09-10</work_date>
+            <hours>7.5</hours>
+        </time_entry>
+        <time_entry>
+            <id>2</id>
+            <task_id>2</task_id>
+            <employee_id>2</employee_id>
+            <work_date>2026-10-06</work_date>
+            <hours>6.0</hours>
+        </time_entry>
+    </time_entries>
+</project_management>

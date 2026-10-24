@@ -1,0 +1,130 @@
+{
+    "departments": [
+        {
+            "id": 1,
+            "name": "Разработка"
+        },
+        {
+            "id": 2,
+            "name": "Тестирование"
+        }
+    ],
+    "employees": [
+        {
+            "id": 1,
+            "name": "Иван Петров",
+            "email": "petrov@company.ru",
+            "position": "Менеджер проектов",
+            "department_id": 1
+        },
+        {
+            "id": 2,
+            "name": "Мария Смирнова",
+            "email": "smirnova@company.ru",
+            "position": "Python-разработчик",
+            "department_id": 1
+        },
+        {
+            "id": 3,
+            "name": "Алексей Козлов",
+            "email": "kozlov@company.ru",
+            "position": "Тестировщик",
+            "department_id": 2
+        }
+    ],
+    "clients": [
+        {
+            "id": 1,
+            "name": "Ольга Кузнецова",
+            "email": "olga@shop.ru",
+            "company": "ООО Магазин"
+        }
+    ],
+    "teams": [
+        {
+            "id": 1,
+            "name": "Backend",
+            "member_ids": [
+                2,
+                3
+            ]
+        }
+    ],
+    "projects": [
+        {
+            "id": 1,
+            "name": "Интернет-магазин",
+            "client_id": 1,
+            "manager_id": 1,
+            "start_date": "2026-09-01",
+            "deadline": "2026-12-20",
+            "status": "active",
+            "budget": 500000.0
+        }
+    ],
+    "milestones": [
+        {
+            "id": 1,
+            "project_id": 1,
+            "title": "MVP",
+            "due_date": "2026-10-31"
+        }
+    ],
+    "tasks": [
+        {
+            "id": 1,
+            "project_id": 1,
+            "title": "Спроектировать БД",
+            "assignee_id": 2,
+            "priority": "high",
+            "status": "done",
+            "estimate_hours": 8.0,
+            "due_date": "2026-09-15"
+        },
+        {
+            "id": 2,
+            "project_id": 1,
+            "title": "Каталог товаров",
+            "assignee_id": 2,
+            "priority": "medium",
+            "status": "in_progress",
+            "estimate_hours": 24.0,
+            "due_date": "2026-10-20"
+        },
+        {
+            "id": 3,
+            "project_id": 1,
+            "title": "Тесты каталога",
+            "assignee_id": 3,
+            "priority": "low",
+            "status": "todo",
+            "estimate_hours": 6.0,
+            "due_date": "2026-11-10"
+        }
+    ],
+    "comments": [
+        {
+            "id": 1,
+            "task_id": 2,
+            "author_id": 1,
+            "text": "Не забудьте фильтр по цене",
+            "created_at": "2026-10-05"
+        }
+    ],
+    "time_entries": [
+        {
+            "id": 1,
+            "task_id": 1,
+            "employee_id": 2,
+            "work_date": "2026-09-10",
+            "hours": 7.5
+        },
+        {
+            "id": 2,
+            "task_id": 2,
+            "employee_id": 2,
+            "work_date": "2026-10-06",
+            "hours": 6.0
+        }
+    ]
+}
