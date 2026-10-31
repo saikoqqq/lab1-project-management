@@ -5,6 +5,7 @@
 """
 
 import json
+import os
 import xml.etree.ElementTree as ET
 from typing import Any
 
@@ -126,3 +127,13 @@ class XmlStorage:
                 items.append(fields)
             data[collection.tag] = items
         return data
+
+
+def get_storage(path: str) -> JsonStorage | XmlStorage:
+    """Выбирает хранилище по расширению файла: .json или .xml."""
+    extension = os.path.splitext(path)[1].lower()
+    if extension == ".json":
+        return JsonStorage()
+    if extension == ".xml":
+        return XmlStorage()
+    raise StorageError(f"Файл {path}: допустимы только .json и .xml")

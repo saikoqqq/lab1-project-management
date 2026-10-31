@@ -1,13 +1,18 @@
 """Консольное приложение «Управление проектами».
 
-Запуск: python main.py
+Два способа запуска:
+    python main.py                                  - меню (ввод с клавиатуры)
+    python main.py --input in.json --output out.xml - файл на входе,
+                                                      файл на выходе
 """
 
+import argparse
 import os
+import sys
 
 from exceptions import AppError, ValidationError
 from service import ProjectManagementSystem
-from storage import JsonStorage, XmlStorage
+from storage import JsonStorage, XmlStorage, get_storage
 
 # Папка data рядом с этим файлом: __file__ - путь к main.py,
 # поэтому файлы находятся, из какой бы папки ни запустили программу
@@ -59,6 +64,14 @@ FIELDS: dict[str, list[tuple[str, str]]] = {
 }
 
 
+def ask_path(default: str) -> str:
+    """Спрашивает имя файла; пустой ввод означает файл по умолчанию."""
+    path = input(f"Имя файла (Enter - {default}): ").strip()
+    if path == "":
+        return default
+    return path
+
+
 class ConsoleApp:
     """Текстовое меню для работы с системой."""
 
@@ -98,13 +111,13 @@ class ConsoleApp:
         elif choice == "5":
             self.delete()
         elif choice == "6":
-            self.save(JsonStorage(), JSON_FILE)
+            self.save(JsonStorage(), ask_path(JSON_FILE))
         elif choice == "7":
-            self.load(JsonStorage(), JSON_FILE)
+            self.load(JsonStorage(), ask_path(JSON_FILE))
         elif choice == "8":
-            self.save(XmlStorage(), XML_FILE)
+            self.save(XmlStorage(), ask_path(XML_FILE))
         elif choice == "9":
-            self.load(XmlStorage(), XML_FILE)
+            self.load(XmlStorage(), ask_path(XML_FILE))
         else:
             print("Нет такого пункта меню")
 
@@ -171,8 +184,38 @@ class ConsoleApp:
         print(f"Загружено из {path}")
 
 
-def main() -> None:
-    """Точка входа: загрузка данных и запуск меню."""
+def parse_args() -> argparse.Namespace:
+    """Разбирает аргументы командной строки."""
+    parser = argparse.ArgumentParser(
+        description="Управление проектами. Без аргументов запускается меню."
+    )
+    parser.add_argument("--input", "-i",
+                        help="входной файл (.json или .xml)")
+    parser.add_argument("--output", "-o",
+                        help="выходной файл (.json или .xml)")
+    return parser.parse_args()
+
+
+def convert(input_path: str, output_path: str) -> None:
+    """Читает входной файл, проверяет данные и записывает выходной файл."""
+    # формат определяется по расширению; если оно неверное - ошибка
+    # возникает сразу, до чтения и записи
+    input_storage = get_storage(input_path)
+    output_storage = get_storage(output_path)
+
+    system = ProjectManagementSystem()
+    system.load_data(input_storage.load(input_path))
+    count = 0
+    for items in system.data.values():
+        count += len(items)
+    print(f"Прочитано {count} объектов из {input_path}")
+
+    output_storage.save(system.to_data(), output_path)
+    print(f"Записано в {output_path}")
+
+
+def run_menu() -> None:
+    """Запускает меню: сначала загружает данные из файла по умолчанию."""
     system = ProjectManagementSystem()
     try:
         system.load_data(JsonStorage().load(JSON_FILE))
@@ -184,6 +227,23 @@ def main() -> None:
         ConsoleApp(system).run()
     except (KeyboardInterrupt, EOFError):
         print("\nПрограмма завершена")
+
+
+def main() -> None:
+    """Точка входа: режим «файл -> файл» или меню."""
+    args = parse_args()
+    if args.input is None and args.output is None:
+        run_menu()
+        return
+
+    if args.input is None or args.output is None:
+        print("Ошибка: укажите и --input, и --output")
+        sys.exit(1)
+    try:
+        convert(args.input, args.output)
+    except AppError as error:
+        print(f"Ошибка: {error}")
+        sys.exit(1)  # код 1 - программа завершилась с ошибкой
 
 
 if __name__ == "__main__":
